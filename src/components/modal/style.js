@@ -6,18 +6,24 @@ import {
   TOP,
 } from '../../utils/Constants';
 
+const viewContainer = {
+  position: 'absolute',
+  width: screenWidth,
+  height: screenHeight,
+  top: 0,
+  left: 0,
+  justifyContent: 'center',
+  alignItems: 'center',
+};
+
 const viewCenter = {
   position: 'absolute',
   width: screenWidth,
   height: screenHeight,
   top: 0,
   left: 0,
-};
-
-const viewBackground = {
-  backgroundColor: 'black',
-  flex: 1,
   opacity: 0.5,
+  backgroundColor: 'black',
 };
 
 const viewModal = {
@@ -50,8 +56,8 @@ const textItem = {
 };
 
 export default {
+  viewContainer,
   viewCenter,
-  viewBackground,
   viewModal,
   textTitle,
   viewItem,

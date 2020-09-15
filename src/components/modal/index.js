@@ -26,9 +26,14 @@ export default class Modal extends Component {
   pick = (index) => {
     const {
       props: {onPick = (index) => {}},
+      state: {visible},
     } = this;
-    onPick(index);
-    this.hide();
+    if (visible) {
+      onPick(index);
+      this.hide();
+      return;
+    }
+    this.show();
   };
 
   hanldBackButtonOnClick = () => {
@@ -59,6 +64,17 @@ export default class Modal extends Component {
     this.setState({visible: true}, () => {
       console.log('visible', this.state.visible);
     });
+  };
+
+  onPressOutside = () => {
+    const {
+      state: {visible},
+    } = this;
+    if (!visible) {
+      this.show();
+      return;
+    }
+    this.hide();
   };
 
   Title = (props) => {
@@ -96,33 +112,36 @@ export default class Modal extends Component {
       state: {visible},
     } = this;
     console.log('visible', this.state.visible);
-    return visible ? (
-      <TouchableWithoutFeedback
-        visible={this.state.visible}
-        animationType={animationType}
-        onPress={this.hide}>
-        <View style={style.viewCenter}>
-          <View style={style.viewBackground} />
-          <View style={style.viewModal}>
-            <View
-              style={[
-                containerStyle,
-                {
-                  paddingBottom: PADDING,
-                  maxHeight: screenHeight - TOP,
-                },
-              ]}>
-              <Title value={title} />
-              <FlatList
-                data={data}
-                renderItem={Item}
-                keyExtractor={(item) => item.key}
-                showsVerticalScrollIndicator={false}
-              />
-            </View>
-          </View>
+    return (
+      <View style={style.viewContainer}>
+        <TouchableWithoutFeedback
+          animationType={animationType}
+          onPress={this.onPressOutside}>
+          <View
+            style={[
+              style.viewCenter,
+              {opacity: visible ? style.viewCenter.opacity : 0},
+            ]}
+          />
+        </TouchableWithoutFeedback>
+        <View
+          style={[
+            containerStyle,
+            {
+              paddingBottom: PADDING,
+              maxHeight: screenHeight - TOP,
+              opacity: visible ? 1 : 0,
+            },
+          ]}>
+          <Title value={title} />
+          <FlatList
+            data={data}
+            renderItem={Item}
+            keyExtractor={(item) => item.key}
+            showsVerticalScrollIndicator={false}
+          />
         </View>
-      </TouchableWithoutFeedback>
-    ) : null;
+      </View>
+    );
   }
 }

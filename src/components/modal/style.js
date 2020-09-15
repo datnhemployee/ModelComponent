@@ -24,7 +24,7 @@ const viewModal = {
   position: 'absolute',
   width: screenWidth,
   height: screenHeight,
-  top: TOP,
+  top: 0,
   left: 0,
   justifyContent: 'center',
   alignItems: 'center',

@@ -7,7 +7,7 @@ import {
   TouchableWithoutFeedback,
 } from 'react-native';
 import style from './style';
-import {PADDING, MODAL_WIDTH} from '../../utils/Constants';
+import {PADDING, MODAL_WIDTH, screenHeight, TOP} from '../../utils/Constants';
 
 export default class Modal extends Component {
   static AnimationType = {
@@ -82,7 +82,7 @@ export default class Modal extends Component {
     return (
       <TouchableWithoutFeedback onPress={() => this.pick(index)}>
         <View style={[style.viewItem, pickingStyle, {width}]}>
-          <Text style={style.textItem}>{item}</Text>
+          <Text style={style.textItem}>{item.value}</Text>
         </View>
       </TouchableWithoutFeedback>
     );
@@ -99,7 +99,8 @@ export default class Modal extends Component {
     return visible ? (
       <TouchableWithoutFeedback
         visible={this.state.visible}
-        animationType={animationType}>
+        animationType={animationType}
+        onPress={this.hide}>
         <View style={style.viewCenter}>
           <View style={style.viewBackground} />
           <View style={style.viewModal}>
@@ -108,13 +109,14 @@ export default class Modal extends Component {
                 containerStyle,
                 {
                   paddingBottom: PADDING,
+                  maxHeight: screenHeight - TOP,
                 },
               ]}>
               <Title value={title} />
               <FlatList
                 data={data}
                 renderItem={Item}
-                keyExtractor={(item, idx) => JSON.stringify(item) + idx}
+                keyExtractor={(item) => item.key}
                 showsVerticalScrollIndicator={false}
               />
             </View>

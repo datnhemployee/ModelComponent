@@ -81,7 +81,7 @@ export default class CustomInput extends BaseInput {
    * `Note`: we can not change the status back to normal state again.
    * please see the app.
    */
-  warn = (status) => {
+  setWarning = (status) => {
     this.setState({
       warning: status,
     });
@@ -95,6 +95,13 @@ export default class CustomInput extends BaseInput {
       onPressEyeIcon();
     }
   };
+
+  get label() {
+    const {
+      props: {label},
+    } = this;
+    return label;
+  }
 
   /**
    * Use for the padding between the label and the value of `TextInput`
@@ -123,7 +130,7 @@ export default class CustomInput extends BaseInput {
       state: {warning},
       props: {height, secureTextEntry},
     } = this;
-    const iconSize = height * 2;
+    const iconSize = (height * 2 * 2) / 3;
     if (typeof secureTextEntry === 'boolean' && !secureTextEntry) {
       return <Ionicons name="eye" size={iconSize} color={ColorBlur} />;
     }
@@ -177,7 +184,6 @@ export default class CustomInput extends BaseInput {
     const isFocus = this.isFocus();
     const textInputFontSize = inputHeight;
     const labelDefaultFontSize = textInputFontSize;
-    console.log('containerHeight', containerHeight);
 
     const autoPadding = inputHeight;
     return (
@@ -256,6 +262,7 @@ export default class CustomInput extends BaseInput {
           onFocus={onFocus}
           underlineColorAndroid="transparent"
           secureTextEntry={secureTextEntry}
+          blurOnSubmit={false}
         />
         <TouchableWithoutFeedback onPress={onPressEyeIcon}>
           <View

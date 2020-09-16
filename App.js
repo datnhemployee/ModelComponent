@@ -53,19 +53,25 @@ class App extends Component {
     this.inputPasswordRef = React.createRef();
 
     this.state = {
-      warning: false,
       secureTextEntry: false,
     };
   }
 
-  onPressSignIn = () => {
-    const {
-      state: {warning},
-    } = this;
+  showWarning = (status) => {
     if (this.inputUsernameRef.current) {
-      this.inputUsernameRef.current.warn(!warning);
-      this.inputPasswordRef.current.warn(!warning);
+      this.inputUsernameRef.current.setWarning(status);
+      this.inputPasswordRef.current.setWarning(status);
     }
+  };
+
+  onPressShowWarning = () => {
+    const {showWarning} = this;
+    showWarning(true);
+  };
+
+  onPressClearWarning = () => {
+    const {showWarning} = this;
+    showWarning(false);
   };
 
   onPressEyeIcon = () => {
@@ -75,12 +81,23 @@ class App extends Component {
     this.setState({secureTextEntry: !secureTextEntry});
   };
 
+  onSubmitUsername = () => {
+    this.inputPasswordRef.current.focus();
+  };
+
+  onSubmitPassword = () => {
+    this.inputUsernameRef.current.focus();
+  };
+
   render() {
     const {
       renderIcon,
-      onPressSignIn,
+      onPressShowWarning,
+      onPressClearWarning,
       onPressEyeIcon,
       state: {isShownIcon, secureTextEntry},
+      onSubmitUsername,
+      onSubmitPassword,
     } = this;
     return (
       <View style={{flex: 1, backgroundColor: 'white'}}>
@@ -105,6 +122,7 @@ class App extends Component {
           renderIcon={renderIcon}
           isShownIcon={isShownIcon}
           onPressEyeIcon={onPressEyeIcon}
+          onSubmitEditing={onSubmitUsername}
         />
         <CustomInput
           ref={this.inputPasswordRef}
@@ -128,9 +146,13 @@ class App extends Component {
           isShownIcon={isShownIcon}
           secureTextEntry={secureTextEntry}
           onPressEyeIcon={onPressEyeIcon}
+          onSubmitEditing={onSubmitPassword}
         />
-        <TouchableOpacity onPress={onPressSignIn}>
-          <Text>Sign In</Text>
+        <TouchableOpacity onPress={onPressShowWarning}>
+          <Text>Get Warning</Text>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={onPressClearWarning}>
+          <Text>Clear Warning</Text>
         </TouchableOpacity>
       </View>
     );

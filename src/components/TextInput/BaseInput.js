@@ -174,6 +174,12 @@ export default class BaseInput extends React.PureComponent {
     ]).start();
   };
 
+  blur = () => {
+    if (this.inputRef.current) {
+      this.inputRef.current.blur();
+    }
+  };
+
   focus = () => {
     const {
       props: {editable},
@@ -190,14 +196,10 @@ export default class BaseInput extends React.PureComponent {
   };
 
   isFocus = () => {
-    // const {inputRef} = this;
     const {
       state: {isFocus},
     } = this;
-    // if (inputRef.current) {
-    //   return inputRef.current.isFocused();
-    // }
-    // return false;
+
     return isFocus;
   };
 

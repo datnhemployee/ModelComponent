@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import {View, TouchableOpacity, Text} from 'react-native';
-import Modal from './src/components/modal_error';
+import Modal from './src/components/modal';
 // import Modal from './src/components/modal';
 import {PADDING, MODAL_WIDTH} from './src/utils/Constants';
 
@@ -59,26 +59,7 @@ class App extends Component {
       onChange,
       state: {pickedIndex},
     } = this;
-    return (
-      <View style={{flex: 1, backgroundColor: '#FFFF65'}}>
-        <TouchableOpacity style={{flex: 1}} onPress={this.showModal}>
-          <Text>show modal</Text>
-        </TouchableOpacity>
-        <Modal
-          ref={(refModal) => (this.modal = refModal)}
-          containerStyle={{
-            width: MODAL_WIDTH,
-            backgroundColor: 'white',
-            borderRadius: PADDING,
-          }}
-          pickedIndex={pickedIndex}
-          onChange={onChange}
-          title="Birth Month"
-          data={mockData}
-          animationType={Modal.AnimationType.none}
-        />
-      </View>
-    );
+    return <View style={{flex: 1, backgroundColor: '#FFFF65'}} />;
   }
 }
 

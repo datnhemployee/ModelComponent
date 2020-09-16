@@ -8,7 +8,8 @@ import {
 import style from './style';
 import BaseInput from './BaseInput';
 import PropTypes from 'prop-types';
-import Icon from 'react-native-vector-icons/Entypo';
+import Entypo from 'react-native-vector-icons/Entypo';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 /**
  * Constants.js
  */
@@ -16,6 +17,11 @@ const BottomLineWidth = 1;
 const ColorBlur = '#a3a3a3';
 const ColorFocus = '#2ecc71';
 const WarningColor = '#e74c3c';
+
+/**
+ * Incase `inputPadding` is equal to `zero`
+ */
+const smallPadding = 8;
 
 /**
  * TextInput.js
@@ -50,6 +56,14 @@ const defaultProps = {
 
   renderIcon: () => null,
   isShownIcon: false,
+  /**
+   * @summary
+   * {null|false|true}
+   * `null`: The textInput does not show anything
+   * `false`: The textInput show the eye
+   * `true`: The textInput show the eye-off
+   */
+  secureTextEntry: null,
 };
 
 export default class CustomInput extends BaseInput {
@@ -58,43 +72,69 @@ export default class CustomInput extends BaseInput {
     this.state.warning = false;
   }
 
-  warn = status => {
+  /**
+   * @param status {true|false}
+   *
+   * @summary
+   * use when want to show warning status of text input
+   *
+   * `Note`: we can not change the status back to normal state again.
+   * please see the app.
+   */
+  warn = (status) => {
     this.setState({
       warning: status,
     });
   };
 
+  onPressEyeIcon = () => {
+    const {
+      props: {onPressEyeIcon, secureTextEntry},
+    } = this;
+    console.log('onPressEyeIcon', onPressEyeIcon, secureTextEntry);
+    if (onPressEyeIcon && typeof secureTextEntry === 'boolean') {
+      onPressEyeIcon();
+    }
+  };
+
+  /**
+   * Use for the padding between the label and the value of `TextInput`
+   */
   get autoPadding() {
     const {
       props: {height},
     } = this;
-    return height;
+    return height + smallPadding;
   }
 
+  /**
+   * The height of all elements in `TextInput`
+   */
   get containerHeight() {
     const {
       props: {height, inputPadding, labelAnimatedFontSize},
       autoPadding,
     } = this;
-    console.log(
-      'containerHeight',
-      height,
-      inputPadding * 2,
-      labelAnimatedFontSize,
-      autoPadding,
-    );
+
     return height + inputPadding * 2 + labelAnimatedFontSize + autoPadding;
   }
 
   renderIcon = () => {
     const {
       state: {warning},
-      props: {height},
+      props: {height, secureTextEntry},
     } = this;
-    const iconSize = height;
-    return warning ? (
-      <Icon name="warning" size={iconSize} color={WarningColor} />
-    ) : null;
+    const iconSize = height * 2;
+    if (typeof secureTextEntry === 'boolean' && !secureTextEntry) {
+      return <Ionicons name="eye" size={iconSize} color={ColorBlur} />;
+    }
+    if (typeof secureTextEntry === 'boolean' && secureTextEntry) {
+      return <Ionicons name="eye-off" size={iconSize} color={ColorBlur} />;
+    }
+    if (warning) {
+      return <Entypo name="warning" size={iconSize} color={WarningColor} />;
+    }
+    return null;
   };
 
   render() {
@@ -112,6 +152,7 @@ export default class CustomInput extends BaseInput {
         styleTextInput,
         colorFocus,
         colorBlur,
+        secureTextEntry,
       },
       state: {
         value,
@@ -130,13 +171,15 @@ export default class CustomInput extends BaseInput {
       onSubmitEditing,
 
       renderIcon,
+      onPressEyeIcon,
+      containerHeight,
     } = this;
 
     const isFocus = this.isFocus();
     const textInputFontSize = inputHeight;
     const labelDefaultFontSize = textInputFontSize;
+    console.log('containerHeight', containerHeight);
 
-    console.log('isFocus', isFocus);
     const autoPadding = inputHeight;
     return (
       <View
@@ -144,11 +187,7 @@ export default class CustomInput extends BaseInput {
           style.viewContainer,
           styleContainer,
           {
-            height:
-              inputHeight +
-              inputPadding * 2 +
-              labelAnimatedFontSize +
-              autoPadding,
+            height: containerHeight,
             borderBottomColor: warning
               ? WarningColor
               : isFocus
@@ -164,10 +203,10 @@ export default class CustomInput extends BaseInput {
             style={{
               position: 'absolute',
               bottom: warning
-                ? inputHeight + inputPadding + autoPadding
+                ? inputHeight + autoPadding
                 : animationView.interpolate({
                     inputRange: [0, 1],
-                    outputRange: [0, inputHeight + inputPadding + autoPadding],
+                    outputRange: [0, inputHeight + autoPadding],
                   }),
             }}>
             <Animated.Text
@@ -197,14 +236,6 @@ export default class CustomInput extends BaseInput {
             </Animated.Text>
           </Animated.View>
         </TouchableWithoutFeedback>
-        <View
-          style={{
-            position: 'absolute',
-            top: inputPadding * 2 + autoPadding,
-            left: width - inputHeight - autoPadding,
-          }}>
-          {renderIcon()}
-        </View>
         <TextInput
           style={[
             style.textInput,
@@ -225,7 +256,18 @@ export default class CustomInput extends BaseInput {
           onSubmitEditing={onSubmitEditing}
           onFocus={onFocus}
           underlineColorAndroid="transparent"
+          secureTextEntry={secureTextEntry}
         />
+        <TouchableWithoutFeedback onPress={onPressEyeIcon}>
+          <View
+            style={{
+              position: 'absolute',
+              top: inputPadding * 2 + autoPadding,
+              left: width - inputHeight - autoPadding,
+            }}>
+            {renderIcon()}
+          </View>
+        </TouchableWithoutFeedback>
       </View>
     );
   }

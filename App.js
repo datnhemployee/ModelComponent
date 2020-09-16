@@ -6,8 +6,8 @@ import CustomInput from './src/components/TextInput';
  * Constants.js
  */
 const PADDING = 0;
-const inputHeight = 24;
-const labelAnimatedFontSize = 14;
+const inputHeight = 14;
+const labelAnimatedFontSize = 12;
 const screenWidth = Dimensions.get('window').width;
 /*
  * App.js
@@ -50,9 +50,11 @@ class App extends Component {
   constructor(props) {
     super(props);
     this.inputUsernameRef = React.createRef();
+    this.inputPasswordRef = React.createRef();
 
     this.state = {
       warning: false,
+      secureTextEntry: false,
     };
   }
 
@@ -62,14 +64,23 @@ class App extends Component {
     } = this;
     if (this.inputUsernameRef.current) {
       this.inputUsernameRef.current.warn(!warning);
+      this.inputPasswordRef.current.warn(!warning);
     }
+  };
+
+  onPressEyeIcon = () => {
+    const {
+      state: {secureTextEntry},
+    } = this;
+    this.setState({secureTextEntry: !secureTextEntry});
   };
 
   render() {
     const {
       renderIcon,
       onPressSignIn,
-      state: {isShownIcon},
+      onPressEyeIcon,
+      state: {isShownIcon, secureTextEntry},
     } = this;
     return (
       <View style={{flex: 1, backgroundColor: 'white'}}>
@@ -93,6 +104,30 @@ class App extends Component {
           styleTextInput={{}}
           renderIcon={renderIcon}
           isShownIcon={isShownIcon}
+          onPressEyeIcon={onPressEyeIcon}
+        />
+        <CustomInput
+          ref={this.inputPasswordRef}
+          label="Password"
+          editable
+          height={inputHeight}
+          inputPadding={PADDING}
+          labelAnimatedFontSize={labelAnimatedFontSize}
+          /**
+           * DO NOT use {`flex`} for set `styleContainer`
+           */
+          styleContainer={{
+            position: 'absolute',
+            top: 100 + inputHeight * 4,
+            left: PADDING,
+            width: screenWidth - PADDING * 2,
+          }}
+          styleLabel={{}}
+          styleTextInput={{}}
+          renderIcon={renderIcon}
+          isShownIcon={isShownIcon}
+          secureTextEntry={secureTextEntry}
+          onPressEyeIcon={onPressEyeIcon}
         />
         <TouchableOpacity onPress={onPressSignIn}>
           <Text>Sign In</Text>

@@ -9,7 +9,7 @@ import PropTypes from 'prop-types';
 const animationDuration = 100;
 
 /**
- * @see https://github.com/halilb/react-native-textinput-effects/blob/master/lib/Sae.js
+ * @see https://github.com/halilb/react-native-textinput-effects/blob/master/lib/BaseInput.js
  */
 
 const propTypes = {
@@ -128,7 +128,6 @@ export default class BaseInput extends React.PureComponent {
   };
 
   onSubmitEditing = (event) => {
-    console.log('onSubmitEditing');
     const {
       props: {onSubmitEditing},
       onBlur,
@@ -145,7 +144,6 @@ export default class BaseInput extends React.PureComponent {
       props: {animationDuration, easing, useNativeDriver},
       state: {animationTextColor, isFocus},
     } = this;
-    console.log('animateTextColor', isFocus);
     Animated.timing(animationTextColor, {
       toValue: isFocus ? 1 : 0,
       duration: animationDuration,

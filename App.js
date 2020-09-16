@@ -7,8 +7,8 @@ import CustomInput from './src/components/TextInput';
  */
 const PADDING = 8;
 const inputHeight = 24;
-const labelDefaultFontSize = 14;
-const labelAnimatedFontSize = 8;
+const labelDefaultFontSize = 24;
+const labelAnimatedFontSize = 14;
 const textInputFontSize = inputHeight;
 const screenWidth = Dimensions.get('window').width;
 /*

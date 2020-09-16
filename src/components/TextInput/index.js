@@ -80,7 +80,7 @@ export default class CustomInput extends BaseInput {
           style.viewContainer,
           styleContainer,
           {
-            height: inputHeight + inputPadding * 2,
+            height: inputHeight + inputPadding * 2 + labelAnimatedFontSize,
             borderBottomColor: isFocus
               ? BottomLineColorFocus
               : BottomLineColorBlur,
@@ -92,7 +92,6 @@ export default class CustomInput extends BaseInput {
         <TouchableWithoutFeedback onPress={this.focus}>
           <Animated.View
             style={{
-              borderWidth: 2,
               position: 'absolute',
               bottom: animation.interpolate({
                 inputRange: [0, 1],
@@ -121,7 +120,7 @@ export default class CustomInput extends BaseInput {
             {
               marginTop: inputPadding,
               width,
-              height: inputHeight + inputPadding,
+              height: inputHeight + inputPadding + labelAnimatedFontSize,
               // paddingTop: inputPadding * 2,
               paddingTop: 0,
               paddingBottom: 0,

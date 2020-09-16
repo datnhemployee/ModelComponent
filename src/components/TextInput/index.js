@@ -34,7 +34,6 @@ const propTypes = {
   labelHeight: PropTypes.number,
 
   labelAnimatedFontSize: PropTypes.number,
-  textInputFontSize: PropTypes.number,
 };
 
 const defaultProps = {
@@ -53,7 +52,6 @@ export default class CustomInput extends BaseInput {
         height: inputHeight,
         inputPadding,
         labelAnimatedFontSize,
-        textInputFontSize,
         // label
         label,
         // styles
@@ -73,6 +71,7 @@ export default class CustomInput extends BaseInput {
     } = this;
 
     const isFocus = this.isFocus();
+    const textInputFontSize = inputHeight;
     const labelDefaultFontSize = textInputFontSize;
 
     return (
@@ -119,7 +118,7 @@ export default class CustomInput extends BaseInput {
             style.textInput,
             styleTextInput,
             {
-              marginTop: inputPadding,
+              marginTop: inputPadding * 2,
               width,
               height: inputHeight + inputPadding + labelAnimatedFontSize,
               // paddingTop: inputPadding * 2,

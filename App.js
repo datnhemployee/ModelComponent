@@ -8,7 +8,6 @@ import CustomInput from './src/components/TextInput';
 const PADDING = 8;
 const inputHeight = 24;
 const labelAnimatedFontSize = 14;
-const textInputFontSize = inputHeight;
 const screenWidth = Dimensions.get('window').width;
 /*
  * App.js
@@ -63,7 +62,9 @@ class App extends Component {
           height={inputHeight}
           inputPadding={PADDING}
           labelAnimatedFontSize={labelAnimatedFontSize}
-          textInputFontSize={textInputFontSize}
+          /**
+           * DO NOT use {`flex`} for set `styleContainer`
+           */
           styleContainer={{
             position: 'absolute',
             top: 100,

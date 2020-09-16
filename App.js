@@ -1,8 +1,19 @@
 import React, {Component} from 'react';
-import {View, TouchableOpacity, Text} from 'react-native';
-import Modal from './src/components/modal';
-// import Modal from './src/components/modal';
-import {PADDING, MODAL_WIDTH} from './src/utils/Constants';
+import {View, Dimensions} from 'react-native';
+import CustomInput from './src/components/TextInput';
+
+/*
+ * Constants.js
+ */
+const PADDING = 8;
+const inputHeight = 24;
+const labelDefaultFontSize = 14;
+const labelAnimatedFontSize = 8;
+const textInputFontSize = inputHeight;
+const screenWidth = Dimensions.get('window').width;
+/*
+ * App.js
+ */
 
 const uniqueId = {
   value: 0,
@@ -40,26 +51,33 @@ for (let item of mockData) {
 class App extends Component {
   constructor(props) {
     super(props);
-    this.state = {
-      pickedIndex: null,
-    };
+    this.inputUsernameRef = React.createRef();
   }
 
-  onChange = ({item, index}) => {
-    console.log('pick', index);
-    this.setState({pickedIndex: index});
-  };
-
-  showModal = () => {
-    this.modal.show();
-  };
-
   render() {
-    const {
-      onChange,
-      state: {pickedIndex},
-    } = this;
-    return <View style={{flex: 1, backgroundColor: '#FFFF65'}} />;
+    return (
+      <View style={{flex: 1, backgroundColor: '#FFFF65'}}>
+        <CustomInput
+          ref={this.inputUsernameRef}
+          label="Username"
+          editable
+          height={inputHeight}
+          inputPadding={PADDING}
+          labelDefaultFontSize={labelDefaultFontSize}
+          labelAnimatedFontSize={labelAnimatedFontSize}
+          styleContainer={{
+            position: 'absolute',
+            top: 100,
+            left: PADDING,
+            width: screenWidth - PADDING * 2,
+          }}
+          styleLabel={{}}
+          styleTextInput={{
+            fontSize: textInputFontSize,
+          }}
+        />
+      </View>
+    );
   }
 }
 

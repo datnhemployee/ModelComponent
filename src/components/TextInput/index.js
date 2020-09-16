@@ -13,8 +13,8 @@ import PropTypes from 'prop-types';
  * Constants.js
  */
 const BottomLineWidth = 1;
-const BottomLineColorBlur = 'grey';
-const BottomLineColorFocus = 'green';
+const ColorBlur = '#a3a3a3';
+const ColorFocus = '#2ecc71';
 
 /**
  * TextInput.js
@@ -34,15 +34,24 @@ const propTypes = {
   labelHeight: PropTypes.number,
 
   labelAnimatedFontSize: PropTypes.number,
+
+  colorFocus: PropTypes.string,
+  colorBlur: PropTypes.string,
 };
 
 const defaultProps = {
   ...BaseInput.defaultProps,
+  colorFocus: ColorFocus,
+  ColorBlur: ColorBlur,
 };
 
 export default class CustomInput extends BaseInput {
   constructor(props) {
     super(props);
+    /**
+     * *Note: Change with responsive UI
+     */
+    this.autorPadding = 8;
   }
 
   render() {
@@ -58,14 +67,17 @@ export default class CustomInput extends BaseInput {
         styleContainer,
         styleLabel,
         styleTextInput,
+        colorFocus,
+        colorBlur,
       },
-      state: {value, width, animation},
+      state: {value, width, animationText, animationView, animationTextColor},
       // private handlers
 
       onLayout,
       onChange,
       onFocus,
       onBlur,
+      onSubmitEditing,
 
       // refs
     } = this;
@@ -74,16 +86,19 @@ export default class CustomInput extends BaseInput {
     const textInputFontSize = inputHeight;
     const labelDefaultFontSize = textInputFontSize;
 
+    console.log('isFocus', isFocus);
     return (
       <View
         style={[
           style.viewContainer,
           styleContainer,
           {
-            height: inputHeight + inputPadding * 2 + labelAnimatedFontSize,
-            borderBottomColor: isFocus
-              ? BottomLineColorFocus
-              : BottomLineColorBlur,
+            height:
+              inputHeight +
+              inputPadding * 2 +
+              labelAnimatedFontSize +
+              this.autorPadding,
+            borderBottomColor: isFocus ? colorFocus : colorBlur,
             borderBottomWidth: BottomLineWidth,
             paddingBottom: 0,
           },
@@ -93,9 +108,12 @@ export default class CustomInput extends BaseInput {
           <Animated.View
             style={{
               position: 'absolute',
-              bottom: animation.interpolate({
+              bottom: animationView.interpolate({
                 inputRange: [0, 1],
-                outputRange: [0, inputHeight + inputPadding],
+                outputRange: [
+                  0,
+                  inputHeight + inputPadding + this.autorPadding,
+                ],
               }),
             }}>
             <Animated.Text
@@ -103,7 +121,12 @@ export default class CustomInput extends BaseInput {
                 style.textLabel,
                 styleLabel,
                 {
-                  fontSize: animation.interpolate({
+                  color: animationTextColor.interpolate({
+                    inputRange: [0, 1],
+                    // outputRange: ['#696969',  '#a3a3a3'],
+                    outputRange: [ColorBlur, ColorFocus],
+                  }),
+                  fontSize: animationText.interpolate({
                     inputRange: [0, 1],
                     outputRange: [labelDefaultFontSize, labelAnimatedFontSize],
                   }),
@@ -118,20 +141,19 @@ export default class CustomInput extends BaseInput {
             style.textInput,
             styleTextInput,
             {
-              marginTop: inputPadding * 2,
+              marginTop: inputPadding * 2 + this.autorPadding,
               width,
               height: inputHeight + inputPadding + labelAnimatedFontSize,
-              // paddingTop: inputPadding * 2,
               paddingTop: 0,
               paddingBottom: 0,
               fontSize: textInputFontSize,
-              // borderWidth: 1,
             },
           ]}
           ref={this.inputRef}
           value={value}
           onChange={onChange}
           onBlur={onBlur}
+          onSubmitEditing={onSubmitEditing}
           onFocus={onFocus}
           underlineColorAndroid="transparent"
         />

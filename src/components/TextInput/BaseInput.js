@@ -6,7 +6,7 @@ import PropTypes from 'prop-types';
  * Constants.js
  */
 
-const animationDuration = 300;
+const animationDuration = 100;
 
 /**
  * @see https://github.com/halilb/react-native-textinput-effects/blob/master/lib/Sae.js
@@ -34,6 +34,7 @@ const propTypes = {
   onBlur: PropTypes.func,
   onChange: PropTypes.func,
   onFocus: PropTypes.func,
+  onSubmitEditing: PropTypes.func,
 
   // animation props
   easing: PropTypes.func,
@@ -45,10 +46,6 @@ const defaultProps = {
   label: '',
   value: '',
   editable: true,
-
-  onBlur: () => {},
-  onChange: () => {},
-  onFocus: () => {},
 
   easing: Easing.linear,
   animationDuration: animationDuration,
@@ -63,8 +60,13 @@ export default class BaseInput extends React.PureComponent {
     this.state = {
       width: null,
       value: null,
+      isFocus: false,
     };
-    this.state.animation = new Animated.Value(this.state.value ? 1 : 0.1);
+    this.state.animationText = new Animated.Value(this.state.value ? 1 : 0.1);
+    this.state.animationView = new Animated.Value(this.state.value ? 1 : 0.1);
+    this.state.animationTextColor = new Animated.Value(
+      this.state.isFocus ? 1 : 0.1,
+    );
   }
 
   get value() {
@@ -84,7 +86,9 @@ export default class BaseInput extends React.PureComponent {
         value: event.nativeEvent.text,
       },
       () => {
-        onChange(event);
+        if (onChange) {
+          onChange(event);
+        }
       },
     );
   };
@@ -93,47 +97,89 @@ export default class BaseInput extends React.PureComponent {
     const {
       props: {onBlur},
       state: {value},
+      animateTextColor,
     } = this;
-    if (!value) {
-      this.toggle(false);
-    }
-    if (onBlur) {
-      onBlur(event);
-    }
+    this.setState({isFocus: false}, () => {
+      animateTextColor();
+      if (!value) {
+        this.toggle(false);
+      }
+      if (onBlur) {
+        onBlur(event);
+      }
+    });
   };
 
   onFocus = (event) => {
     const {
       props: {onFocus},
       state: {value},
+      animateTextColor,
     } = this;
-    if (!value) {
-      this.toggle(true);
-    }
-    if (onFocus) {
-      onFocus(event);
+    this.setState({isFocus: true}, () => {
+      animateTextColor();
+      if (!value) {
+        this.toggle(true);
+      }
+      if (onFocus) {
+        onFocus(event);
+      }
+    });
+  };
+
+  onSubmitEditing = (event) => {
+    console.log('onSubmitEditing');
+    const {
+      props: {onSubmitEditing},
+      onBlur,
+    } = this;
+    onBlur(event);
+
+    if (onSubmitEditing) {
+      onSubmitEditing(event);
     }
   };
 
-  toggle = (isActive) => {
+  animateTextColor = () => {
     const {
       props: {animationDuration, easing, useNativeDriver},
-      state: {animation},
+      state: {animationTextColor, isFocus},
     } = this;
-    this.isActive = isActive;
-    Animated.timing(animation, {
-      toValue: isActive ? 1 : 0,
+    console.log('animateTextColor', isFocus);
+    Animated.timing(animationTextColor, {
+      toValue: isFocus ? 1 : 0,
       duration: animationDuration,
       easing,
       useNativeDriver,
     }).start();
   };
 
+  toggle = (isActive) => {
+    const {
+      props: {animationDuration, easing, useNativeDriver},
+      state: {animationText, animationView},
+    } = this;
+    this.isActive = isActive;
+    Animated.parallel([
+      Animated.timing(animationText, {
+        toValue: isActive ? 1 : 0,
+        duration: animationDuration,
+        easing,
+        useNativeDriver,
+      }),
+      Animated.timing(animationView, {
+        toValue: isActive ? 1 : 0,
+        duration: animationDuration,
+        easing,
+        useNativeDriver,
+      }),
+    ]).start();
+  };
+
   focus = () => {
     const {
       props: {editable},
     } = this;
-    console.log('focus', editable, this.inputRef.current);
     if (editable && this.inputRef.current) {
       this.inputRef.current.focus();
     }
@@ -146,11 +192,15 @@ export default class BaseInput extends React.PureComponent {
   };
 
   isFocus = () => {
-    const {inputRef} = this;
-    if (inputRef.current) {
-      return inputRef.current.isFocused();
-    }
-    return false;
+    // const {inputRef} = this;
+    const {
+      state: {isFocus},
+    } = this;
+    // if (inputRef.current) {
+    //   return inputRef.current.isFocused();
+    // }
+    // return false;
+    return isFocus;
   };
 
   clear = () => {

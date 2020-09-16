@@ -5,7 +5,7 @@ import CustomInput from './src/components/TextInput';
 /*
  * Constants.js
  */
-const PADDING = 8;
+const PADDING = 0;
 const inputHeight = 24;
 const labelAnimatedFontSize = 14;
 const screenWidth = Dimensions.get('window').width;
@@ -54,7 +54,7 @@ class App extends Component {
 
   render() {
     return (
-      <View style={{flex: 1, backgroundColor: '#FFFF65'}}>
+      <View style={{flex: 1, backgroundColor: 'white'}}>
         <CustomInput
           ref={this.inputUsernameRef}
           label="Username"

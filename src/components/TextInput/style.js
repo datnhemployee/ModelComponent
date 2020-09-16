@@ -4,7 +4,6 @@ const viewContainer = {
 const textInput = {
   backgroundColor: 'transparent',
   fontWeight: 'bold',
-  color: '#7771ab',
 };
 const textLabel = {
   position: 'absolute',

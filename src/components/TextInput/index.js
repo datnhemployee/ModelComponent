@@ -91,7 +91,6 @@ export default class CustomInput extends BaseInput {
     const {
       props: {onPressEyeIcon, secureTextEntry},
     } = this;
-    console.log('onPressEyeIcon', onPressEyeIcon, secureTextEntry);
     if (onPressEyeIcon && typeof secureTextEntry === 'boolean') {
       onPressEyeIcon();
     }
@@ -206,7 +205,7 @@ export default class CustomInput extends BaseInput {
                 ? inputHeight + autoPadding
                 : animationView.interpolate({
                     inputRange: [0, 1],
-                    outputRange: [0, inputHeight + autoPadding],
+                    outputRange: [smallPadding, inputHeight + autoPadding],
                   }),
             }}>
             <Animated.Text

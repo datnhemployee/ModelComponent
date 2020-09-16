@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {View, Dimensions} from 'react-native';
+import {View, Dimensions, TouchableOpacity, Text} from 'react-native';
 import CustomInput from './src/components/TextInput';
 
 /*
@@ -50,9 +50,27 @@ class App extends Component {
   constructor(props) {
     super(props);
     this.inputUsernameRef = React.createRef();
+
+    this.state = {
+      warning: false,
+    };
   }
 
+  onPressSignIn = () => {
+    const {
+      state: {warning},
+    } = this;
+    if (this.inputUsernameRef.current) {
+      this.inputUsernameRef.current.warn(!warning);
+    }
+  };
+
   render() {
+    const {
+      renderIcon,
+      onPressSignIn,
+      state: {isShownIcon},
+    } = this;
     return (
       <View style={{flex: 1, backgroundColor: 'white'}}>
         <CustomInput
@@ -73,7 +91,12 @@ class App extends Component {
           }}
           styleLabel={{}}
           styleTextInput={{}}
+          renderIcon={renderIcon}
+          isShownIcon={isShownIcon}
         />
+        <TouchableOpacity onPress={onPressSignIn}>
+          <Text>Sign In</Text>
+        </TouchableOpacity>
       </View>
     );
   }

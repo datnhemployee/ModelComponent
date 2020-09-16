@@ -33,8 +33,8 @@ const propTypes = {
   inputPadding: PropTypes.number,
   labelHeight: PropTypes.number,
 
-  labelDefaultFontSize: PropTypes.number,
   labelAnimatedFontSize: PropTypes.number,
+  textInputFontSize: PropTypes.number,
 };
 
 const defaultProps = {
@@ -52,8 +52,8 @@ export default class CustomInput extends BaseInput {
         // size
         height: inputHeight,
         inputPadding,
-        labelDefaultFontSize,
         labelAnimatedFontSize,
+        textInputFontSize,
         // label
         label,
         // styles
@@ -73,6 +73,7 @@ export default class CustomInput extends BaseInput {
     } = this;
 
     const isFocus = this.isFocus();
+    const labelDefaultFontSize = textInputFontSize;
 
     return (
       <View
@@ -124,6 +125,7 @@ export default class CustomInput extends BaseInput {
               // paddingTop: inputPadding * 2,
               paddingTop: 0,
               paddingBottom: 0,
+              fontSize: textInputFontSize,
               // borderWidth: 1,
             },
           ]}

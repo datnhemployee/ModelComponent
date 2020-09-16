@@ -7,7 +7,6 @@ import CustomInput from './src/components/TextInput';
  */
 const PADDING = 8;
 const inputHeight = 24;
-const labelDefaultFontSize = 24;
 const labelAnimatedFontSize = 14;
 const textInputFontSize = inputHeight;
 const screenWidth = Dimensions.get('window').width;
@@ -63,8 +62,8 @@ class App extends Component {
           editable
           height={inputHeight}
           inputPadding={PADDING}
-          labelDefaultFontSize={labelDefaultFontSize}
           labelAnimatedFontSize={labelAnimatedFontSize}
+          textInputFontSize={textInputFontSize}
           styleContainer={{
             position: 'absolute',
             top: 100,
@@ -72,9 +71,7 @@ class App extends Component {
             width: screenWidth - PADDING * 2,
           }}
           styleLabel={{}}
-          styleTextInput={{
-            fontSize: textInputFontSize,
-          }}
+          styleTextInput={{}}
         />
       </View>
     );

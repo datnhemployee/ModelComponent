@@ -1,15 +1,37 @@
 import React, {Component} from 'react';
 import {
-  View,
+  Modal,
   FlatList,
   Text,
-  BackHandler,
   TouchableWithoutFeedback,
+  View,
+  Dimensions,
+  StatusBar,
 } from 'react-native';
 import style from './style';
-import {PADDING, MODAL_WIDTH, screenHeight, TOP} from '../../utils/Constants';
 
-export default class Modal extends Component {
+// Constants.js
+
+let {width: screenWidth, height: screenHeight} = Dimensions.get('window');
+
+screenHeight = screenHeight - StatusBar.currentHeight;
+
+const PADDING = 24;
+
+const font = {
+  Header: {
+    fontWeight: 'bold',
+    fontSize: 24,
+  },
+  Body: {
+    fontSize: 14,
+  },
+};
+
+const _itemHeight = font.Header.fontSize + PADDING;
+
+// Modal.js
+export default class CustomModal extends Component {
   static AnimationType = {
     slide: 'slide',
     fade: 'fade',
@@ -23,83 +45,61 @@ export default class Modal extends Component {
     };
   }
 
-  pick = (index) => {
-    const {
-      props: {onPick = (index) => {}},
-      state: {visible},
-    } = this;
-    if (visible) {
-      onPick(index);
-      this.hide();
-      return;
-    }
-    this.show();
-  };
-
   hanldBackButtonOnClick = () => {
     console.log('backbuttonOnClick');
     this.hide();
-    return true;
   };
-
-  componentDidMount() {
-    BackHandler.addEventListener(
-      'hardwareBackPress',
-      this.hanldBackButtonOnClick,
-    );
-  }
-
-  componentWillUnmount() {
-    BackHandler.removeEventListener(
-      'hardwareBackPress',
-      this.hanldBackButtonOnClick,
-    );
-  }
 
   hide = () => {
     this.setState({visible: false});
   };
 
   show = () => {
-    this.setState({visible: true}, () => {
-      console.log('visible', this.state.visible);
-    });
+    this.setState({visible: true});
   };
 
-  onPressOutside = () => {
+  onChange = ({value, index}) => {
     const {
-      state: {visible},
+      props: {onChange},
     } = this;
-    if (!visible) {
-      this.show();
-      return;
-    }
+    onChange({value, index});
     this.hide();
   };
 
   Title = (props) => {
     const {value} = props;
-    return <Text style={style.textTitle}>{value}</Text>;
+    return (
+      <Text
+        style={{
+          textAlign: 'center',
+          ...font.Header,
+        }}>
+        {value}
+      </Text>
+    );
   };
 
-  Item = ({item, index}) => {
+  Item = ({item: {value}, index}) => {
     const {
-      props: {
-        pickingIndex = null,
-        containerStyle: {width = MODAL_WIDTH},
-      },
+      props: {pickedIndex, itemHeight = _itemHeight},
     } = this;
-    const pickingStyle =
-      index === pickingIndex
-        ? {
-            backgroundColor: 'grey',
-          }
-        : {backgroundColor: 'transparent'};
     return (
-      <TouchableWithoutFeedback onPress={() => this.pick(index)}>
-        <View style={[style.viewItem, pickingStyle, {width}]}>
-          <Text style={style.textItem}>{item.value}</Text>
-        </View>
+      <TouchableWithoutFeedback onPress={() => this.onChange({value, index})}>
+        <Text
+          style={[
+            {
+              height: itemHeight,
+              ...font.Body,
+              textAlignVertical: 'center',
+              paddingLeft: PADDING,
+            },
+            {
+              backgroundColor:
+                index === pickedIndex ? '#00000099' : 'transparent',
+            },
+          ]}>
+          {value}
+        </Text>
       </TouchableWithoutFeedback>
     );
   };
@@ -109,39 +109,51 @@ export default class Modal extends Component {
       props: {title, data, animationType, containerStyle},
       Title,
       Item,
-      state: {visible},
     } = this;
     console.log('visible', this.state.visible);
     return (
-      <View style={style.viewContainer}>
-        <TouchableWithoutFeedback
-          animationType={animationType}
-          onPress={this.onPressOutside}>
-          <View
-            style={[
-              style.viewCenter,
-              {opacity: visible ? style.viewCenter.opacity : 0},
-            ]}
-          />
-        </TouchableWithoutFeedback>
+      <Modal
+        visible={this.state.visible}
+        animationType={animationType}
+        onRequestClose={this.hide}
+        transparent>
         <View
-          style={[
-            containerStyle,
-            {
+          style={{
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}>
+          <TouchableWithoutFeedback onPress={this.hide}>
+            <View
+              style={{
+                backgroundColor: 'black',
+                opacity: 0.7,
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                height: screenHeight,
+                width: screenWidth,
+              }}
+            />
+          </TouchableWithoutFeedback>
+          <View
+            style={{
+              width: (screenWidth * 2) / 3,
+              height: screenHeight,
+              backgroundColor: 'white',
+              borderRadius: PADDING,
+              paddingTop: PADDING,
               paddingBottom: PADDING,
-              maxHeight: screenHeight - TOP,
-              opacity: visible ? 1 : 0,
-            },
-          ]}>
-          <Title value={title} />
-          <FlatList
-            data={data}
-            renderItem={Item}
-            keyExtractor={(item) => item.key}
-            showsVerticalScrollIndicator={false}
-          />
+            }}>
+            <Title value={title} />
+            <FlatList
+              showsVerticalScrollIndicator={false}
+              data={data}
+              renderItem={Item}
+              keyExtractor={(item, idx) => item.key}
+            />
+          </View>
         </View>
-      </View>
+      </Modal>
     );
   }
 }

@@ -1,12 +1,12 @@
 import React, {Component} from 'react';
 import {View, TouchableOpacity, Text} from 'react-native';
-// import Modal from './src/components/modal_error';
-import Modal from './src/components/modal';
+import Modal from './src/components/modal_error';
+// import Modal from './src/components/modal';
 import {PADDING, MODAL_WIDTH} from './src/utils/Constants';
 
 const uniqueId = {
   value: 0,
-  next: function() {
+  next: function () {
     this.value += 1;
     return this.value;
   },
@@ -41,13 +41,13 @@ class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      picking: null,
+      pickedIndex: null,
     };
   }
 
-  onPick = index => {
+  onChange = ({item, index}) => {
     console.log('pick', index);
-    this.setState({picking: index});
+    this.setState({pickedIndex: index});
   };
 
   showModal = () => {
@@ -56,8 +56,8 @@ class App extends Component {
 
   render() {
     const {
-      onPick,
-      state: {picking},
+      onChange,
+      state: {pickedIndex},
     } = this;
     return (
       <View style={{flex: 1, backgroundColor: '#FFFF65'}}>
@@ -65,14 +65,14 @@ class App extends Component {
           <Text>show modal</Text>
         </TouchableOpacity>
         <Modal
-          ref={refModal => (this.modal = refModal)}
+          ref={(refModal) => (this.modal = refModal)}
           containerStyle={{
             width: MODAL_WIDTH,
             backgroundColor: 'white',
             borderRadius: PADDING,
           }}
-          pickingIndex={picking}
-          onPick={onPick}
+          pickedIndex={pickedIndex}
+          onChange={onChange}
           title="Birth Month"
           data={mockData}
           animationType={Modal.AnimationType.none}
